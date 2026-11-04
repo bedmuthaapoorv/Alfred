@@ -1,0 +1,19 @@
+# systemd user unit. Install:
+#   mkdir -p ~/.config/systemd/user && cp deploy/alfred.service ~/.config/systemd/user/
+#   systemctl --user daemon-reload && systemctl --user enable --now alfred
+#   loginctl enable-linger "$USER"   # keep running after logout
+[Unit]
+Description=Alfred proactive assistant
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/alfred serve
+Environment=PYTHONUNBUFFERED=1
+# EnvironmentFile=%h/.config/alfred/env   # ANTHROPIC_API_KEY etc. (phase 1+)
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

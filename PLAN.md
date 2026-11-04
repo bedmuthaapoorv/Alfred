@@ -194,7 +194,7 @@ PLAN.md
 
 | Phase | Goal | Done when |
 |---|---|---|
-| **0. Skeleton** (week 1) | Daemon, event bus, SQLite log, CLI, config, model router | `alfred serve` runs and logs heartbeat events. |
+| **0. Skeleton** (week 1) ✅ | Daemon, event bus, SQLite log, CLI, config, model router | `alfred serve` runs and logs heartbeat events. |
 | **1. Observer** (weeks 2–3) | Gmail + Calendar sensors, triage, morning brief | Daily brief you actually read; triage accuracy measured against your labels. |
 | **2. Assistant** (weeks 4–5) | Planner, executor, policy gate, approval queue, T1 actions | Alfred drafts replies and preps meetings unprompted; you approve T2 from your phone. |
 | **3. Memory** (week 6) | Profile, commitments, playbooks, retrieval | Alfred follows up on commitments without being reminded. |
@@ -211,15 +211,15 @@ PLAN.md
 
 ---
 
-## 7. Open questions for you
-1. **Where does it run?** Always-on home server / VPS, or scheduled cloud
-   sessions? (The daemon design assumes always-on.)
-2. **How do you want to be reached** for approvals: push notification,
+## 7. Decisions
+- **Runs on:** an always-on server (systemd user service).
+- **First domains:** email + calendar.
+
+## 8. Open questions
+1. **How do you want to be reached** for approvals: push notification,
    email digest, Telegram/Slack, or a small web dashboard?
-3. **First domains:** I've assumed email + calendar first. Is GitHub/coding
-   work more valuable to start with?
-4. **Risk appetite:** comfortable with Alfred sending email on its own after
+2. **Risk appetite:** comfortable with Alfred sending email on its own after
    promotion, or should sending always stay T2?
-5. **Self-applied changes:** are you OK with auto-applied prompt/playbook
+3. **Self-applied changes:** are you OK with auto-applied prompt/playbook
    changes (eval-gated, with rollback), or should every change be a PR at
    first?

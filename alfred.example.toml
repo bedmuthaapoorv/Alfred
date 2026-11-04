@@ -1,0 +1,19 @@
+# Copy to alfred.toml (or point ALFRED_CONFIG at it) and adjust.
+
+[core]
+data_dir = "~/.alfred"        # SQLite DB and runtime state live here
+log_level = "INFO"
+
+[heartbeat]
+interval_seconds = 300        # how often Alfred wakes up unprompted
+
+[models]
+# Tier -> model ID. Code asks for a tier, never a model ID.
+triage  = "claude-haiku-5-5"
+draft   = "claude-sonnet-5-5"
+plan    = "claude-opus-5-5"
+reflect = "claude-opus-5-5"
+
+[budget]
+max_actions_per_hour = 30
+max_daily_usd = 5.0
