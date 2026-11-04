@@ -28,8 +28,10 @@ class _Subscription:
 
 
 class EventBus:
-    def __init__(self, maxsize: int = 1000) -> None:
-        self._queue: asyncio.Queue[Event] = asyncio.Queue(maxsize=maxsize)
+    def __init__(self) -> None:
+        # Unbounded on purpose: handlers publish follow-up events from inside
+        # the dispatcher, and a bounded queue could deadlock on itself.
+        self._queue: asyncio.Queue[Event] = asyncio.Queue()
         self._subs: list[_Subscription] = []
 
     def subscribe(self, pattern: str, handler: Handler, name: str | None = None) -> None:

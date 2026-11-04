@@ -12,14 +12,26 @@ from __future__ import annotations
 import os
 import tomllib
 from dataclasses import dataclass, field, fields, is_dataclass
+from datetime import time
 from pathlib import Path
 from typing import Any, Mapping
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
 @dataclass
 class CoreConfig:
     data_dir: str = "~/.alfred"
     log_level: str = "INFO"
+    timezone: str = "UTC"  # IANA name, e.g. "Asia/Kolkata"; drives "today" and the brief time
+
+    @property
+    def tz(self) -> ZoneInfo:
+        return ZoneInfo(self.timezone)
+
+    @property
+    def profile_path(self) -> Path:
+        """Free-form notes about you that Alfred reads before every decision."""
+        return self.data_path / "profile.md"
 
     @property
     def data_path(self) -> Path:
@@ -50,11 +62,48 @@ class BudgetConfig:
 
 
 @dataclass
+class GoogleConfig:
+    enabled: bool = True
+    client_secret: str = "~/.config/alfred/google_client_secret.json"
+    token: str = "~/.config/alfred/google_token.json"
+    gmail_poll_seconds: float = 60.0
+    calendar_poll_seconds: float = 120.0
+    upcoming_lead_minutes: int = 15  # emit calendar.event.upcoming this long before start
+
+    @property
+    def client_secret_path(self) -> Path:
+        return Path(self.client_secret).expanduser()
+
+    @property
+    def token_path(self) -> Path:
+        return Path(self.token).expanduser()
+
+
+@dataclass
+class NotifyConfig:
+    channel: str = "email"
+    email: str = ""  # the ONLY address Alfred may send to
+
+
+@dataclass
+class BriefConfig:
+    enabled: bool = True
+    time: str = "07:30"  # local time, HH:MM
+
+    @property
+    def at(self) -> time:
+        return time.fromisoformat(self.time)
+
+
+@dataclass
 class Config:
     core: CoreConfig = field(default_factory=CoreConfig)
     heartbeat: HeartbeatConfig = field(default_factory=HeartbeatConfig)
     models: ModelsConfig = field(default_factory=ModelsConfig)
     budget: BudgetConfig = field(default_factory=BudgetConfig)
+    google: GoogleConfig = field(default_factory=GoogleConfig)
+    notify: NotifyConfig = field(default_factory=NotifyConfig)
+    brief: BriefConfig = field(default_factory=BriefConfig)
     source: Path | None = None  # file the config was loaded from, if any
 
     def as_dict(self) -> dict[str, dict[str, Any]]:
@@ -130,6 +179,24 @@ def load_config(path: str | Path | None = None, env: Mapping[str, str] | None = 
         section, _, key = name[len("ALFRED_"):].lower().partition("__")
         _apply(cfg, section, key, value, f"env {name}")
 
+    _validate(cfg)
+    return cfg
+
+
+def _validate(cfg: Config) -> None:
     if cfg.heartbeat.interval_seconds <= 0:
         raise ConfigError("heartbeat.interval_seconds must be > 0")
-    return cfg
+    if cfg.google.gmail_poll_seconds <= 0 or cfg.google.calendar_poll_seconds <= 0:
+        raise ConfigError("google poll intervals must be > 0")
+    try:
+        cfg.core.tz
+    except (ZoneInfoNotFoundError, ValueError) as e:
+        raise ConfigError(f"core.timezone: unknown time zone {cfg.core.timezone!r}") from e
+    try:
+        cfg.brief.at
+    except ValueError as e:
+        raise ConfigError(f"brief.time: expected HH:MM, got {cfg.brief.time!r}") from e
+    if cfg.notify.channel != "email":
+        raise ConfigError(f"notify.channel: only 'email' is supported, got {cfg.notify.channel!r}")
+    if cfg.notify.email and "@" not in cfg.notify.email:
+        raise ConfigError(f"notify.email: not an email address: {cfg.notify.email!r}")

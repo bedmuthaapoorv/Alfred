@@ -195,7 +195,7 @@ PLAN.md
 | Phase | Goal | Done when |
 |---|---|---|
 | **0. Skeleton** (week 1) ✅ | Daemon, event bus, SQLite log, CLI, config, model router | `alfred serve` runs and logs heartbeat events. |
-| **1. Observer** (weeks 2–3) | Gmail + Calendar sensors, triage, morning brief | Daily brief you actually read; triage accuracy measured against your labels. |
+| **1. Observer** (weeks 2–3) ✅ built, needs live run | Gmail + Calendar sensors, triage, morning brief | Daily brief you actually read; triage accuracy measured against your labels. |
 | **2. Assistant** (weeks 4–5) | Planner, executor, policy gate, approval queue, T1 actions | Alfred drafts replies and preps meetings unprompted; you approve T2 from your phone. |
 | **3. Memory** (week 6) | Profile, commitments, playbooks, retrieval | Alfred follows up on commitments without being reminded. |
 | **4. Learner** (weeks 7–8) | Outcome logging, eval suite, nightly reflection, auto-applied playbook/prompt changes with rollback | First self-applied improvement that measurably raises approval rate. |

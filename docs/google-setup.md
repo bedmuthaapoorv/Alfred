@@ -116,9 +116,6 @@ scopes. The browser lands on `localhost:8765`, which the tunnel carries back to
 Alfred. Alfred then saves the token to `~/.config/alfred/google_token.json`
 (mode 600) and confirms which scopes were granted.
 
-> `alfred google-auth` ships in Phase 1. Until then you can complete steps
-> 1–4 and stop here.
-
 ## 6. Configure Alfred
 
 Add to `alfred.toml`:
@@ -136,7 +133,7 @@ email   = "you@gmail.com"   # the ONLY address Alfred may send to in Phase 1
 Then restart the service (`systemctl --user restart alfred`) and check:
 
 ```bash
-alfred status   # Phase 1 adds google: ok / token expiring / not authorized
+alfred status   # "google": "ok", or what's wrong and how to fix it
 ```
 
 ---

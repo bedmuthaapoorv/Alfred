@@ -3,6 +3,7 @@
 [core]
 data_dir = "~/.alfred"        # SQLite DB and runtime state live here
 log_level = "INFO"
+timezone  = "UTC"             # IANA name, e.g. "Asia/Kolkata"
 
 [heartbeat]
 interval_seconds = 300        # how often Alfred wakes up unprompted
@@ -17,3 +18,19 @@ reflect = "claude-opus-5-5"
 [budget]
 max_actions_per_hour = 30
 max_daily_usd = 5.0
+
+[google]
+# See docs/google-setup.md
+client_secret = "~/.config/alfred/google_client_secret.json"
+token         = "~/.config/alfred/google_token.json"
+gmail_poll_seconds    = 60
+calendar_poll_seconds = 120
+upcoming_lead_minutes = 15
+
+[notify]
+channel = "email"
+email   = "you@gmail.com"     # the ONLY address Alfred may send to
+
+[brief]
+enabled = true
+time    = "07:30"             # local time in core.timezone

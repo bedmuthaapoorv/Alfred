@@ -7,7 +7,12 @@ name = "alfred"
 version = "0.1.0"
 description = "A proactive, self-improving Claude-based assistant"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "anthropic>=2.4",
+    "google-api-python-client>=2.150",
+    "google-auth>=2.35",
+    "google-auth-oauthlib>=1.2",
+]
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-asyncio>=0.23"]
@@ -22,3 +27,4 @@ include = ["alfred*"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 testpaths = ["tests"]
+pythonpath = ["."]

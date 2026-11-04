@@ -51,3 +51,43 @@ _real_sleep = asyncio.sleep
 async def _fast_sleep(delay, *a, **kw):
     # Shrink the daemon's crash-restart backoff (patches asyncio.sleep for the test only).
     await _real_sleep(min(delay, 0.01))
+
+
+async def test_daemon_triages_and_sends_brief(tmp_path):
+    from alfred.agent.brief import BriefBuilder
+    from alfred.agent.triage import Triager
+    from alfred.core.daemon import Components
+    from alfred.core.events import Event
+    from alfred.notify.email import EmailNotifier
+    from tests.fakes import FakeGmail
+
+    class OneShot:
+        name = "oneshot"
+
+        async def run(self, publish):
+            await publish(Event(source="gmail", kind="message.received",
+                                payload={"from_name": "Sam", "subject": "Lunch?", "labels": []}))
+            await publish(Event(source="schedule", kind="morning_brief", payload={}))
+            await asyncio.Event().wait()
+
+    store = Store(tmp_path / "a.db")
+    gmail = FakeGmail()
+    comps = Components(
+        triager=Triager(None, store, tmp_path / "p.md"),
+        brief=BriefBuilder(store, None, None, Config().core.tz),
+        notifier=EmailNotifier(gmail, store, "me@example.com"),
+    )
+    d = Daemon(Config(), store, sensors=[OneShot()], components=comps)
+    task = asyncio.create_task(d.run())
+    for _ in range(100):
+        await _real_sleep(0.01)
+        if gmail.sent:
+            break
+    d.stop()
+    await asyncio.wait_for(task, 2)
+
+    counts = store.count_events()
+    assert counts["triage.decided"] == 1
+    assert len(gmail.sent) == 1
+    assert "Lunch?" in gmail.sent[0].get_content()
+    store.close()

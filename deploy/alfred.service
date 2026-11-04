@@ -11,7 +11,8 @@ Wants=network-online.target
 Type=simple
 ExecStart=%h/.local/bin/alfred serve
 Environment=PYTHONUNBUFFERED=1
-# EnvironmentFile=%h/.config/alfred/env   # ANTHROPIC_API_KEY etc. (phase 1+)
+# ANTHROPIC_API_KEY=sk-ant-... goes in this file (chmod 600). The leading - makes it optional.
+EnvironmentFile=-%h/.config/alfred/env
 Restart=always
 RestartSec=5
 
