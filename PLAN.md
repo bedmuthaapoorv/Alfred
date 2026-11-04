@@ -214,12 +214,14 @@ PLAN.md
 ## 7. Decisions
 - **Runs on:** an always-on server (systemd user service).
 - **First domains:** email + calendar.
+- **Reaches you via:** email to yourself (brief, digests, approval requests).
+  In Phase 1 the sender is hard-restricted in code to your own address.
+- **Google access:** own OAuth Desktop client on the server; see
+  [docs/google-setup.md](docs/google-setup.md).
 
 ## 8. Open questions
-1. **How do you want to be reached** for approvals: push notification,
-   email digest, Telegram/Slack, or a small web dashboard?
-2. **Risk appetite:** comfortable with Alfred sending email on its own after
+1. **Risk appetite:** comfortable with Alfred sending email on its own after
    promotion, or should sending always stay T2?
-3. **Self-applied changes:** are you OK with auto-applied prompt/playbook
+2. **Self-applied changes:** are you OK with auto-applied prompt/playbook
    changes (eval-gated, with rollback), or should every change be a PR at
    first?

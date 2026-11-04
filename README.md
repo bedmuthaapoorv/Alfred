@@ -28,6 +28,10 @@ alfred config        # effective configuration
 Any setting can be overridden with `ALFRED_<SECTION>__<KEY>`, e.g.
 `ALFRED_HEARTBEAT__INTERVAL_SECONDS=60`.
 
+## Google access
+
+Follow [docs/google-setup.md](docs/google-setup.md) before Phase 1.
+
 ## Running always-on
 
 `deploy/alfred.service` is a systemd user unit (install steps are in the file).
